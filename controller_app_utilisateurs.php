@@ -1,50 +1,63 @@
 <?
-
-
 $app->post('/app/utilisateur/creer', function () use ($app) {
 
 	// on récupére le JSON via une fonction de Slim
-	$json = $app->request->getBody();
-	// on met le $json dans un table PHP
-    $data = json_decode($json, true);
+	//$json = $app->request->getBody();
 
-	//print_r ($data);
+	// on met le $json dans un table PHP
+    //$data = json_decode($json, true);
+    header('Access-Control-Allow-Origin: *');  
+	$data = json_decode(file_get_contents("php://input"), true);
+	//echo ($data->nom);
+
 
     // GUMP est une class qui va checker les validations
-	$is_valid = GUMP::is_valid($data, array(
-    	'etab' => 'required|numeric',
-    	'nom' => 'required|alpha_numeric',
+	$validated = GUMP::is_valid($data, array(
     	'prenom' => 'required|alpha_numeric',
-    	'adresse' => 'required|alpha_numeric',
+    	'nom' => 'required|alpha_numeric',
+    	'tel' => 'required|numeric|max_len,10',
     	'ville' => 'required|numeric',
-    	'tel' => 'required|numeric|max_len,10|min_len,10',
+    	'adresse' => 'required',
+    	'email' => 'required|valid_email',
     	'passe' => 'required|alpha_numeric',
-    	'email' => 'required|valid_email'
+    	'etab' => 'required|numeric',
 
 	));
 
-	if($is_valid === true) {
-	    // continue
+	if($validated === true) {
+		$data = json_decode(file_get_contents("php://input"));
 
-	    $fiche = ORM::for_table('clients')->create();
+	    // check si existe email :
+	    $checkEmail = ORM::for_table('clients')->where('email', $data->email)->count();
 
-	    $fiche->etab = $data->etad;
-	    $fiche->nom = $data->nom;
-	    $fiche->prenom = $data->prenom;
-	    $fiche->adresse = $data->adresse;
-	    $fiche->ville = $data->ville;
-	    $fiche->tel = $data->tel;
-	    // on encode le mot de passe avec sha1
-	    $fiche->passe = sha1($data->passe);
-	    $fiche->email = $data->email;
+	    if ($checkEmail>0){
+	    	$msg = array("msg"=>"email");
+	    	
+	    } else {
+		
 
-	    $fiche->save();
+		    $fiche = ORM::for_table('clients')->create();
 
-	    echo "ok";
+		    $fiche->etab = $data->etab;
+		    $fiche->nom = $data->nom;
+		    $fiche->prenom = $data->prenom;
+		    $fiche->adresse = $data->adresse;
+		    $fiche->ville = $data->ville;
+		    $fiche->tel = $data->tel;
+		    // on encode le mot de passe avec sha1
+		    $fiche->passe = sha1($data->passe);
+		    $fiche->email = $data->email;
+
+		    $fiche->save();
+
+		    $msg = array("msg"=>"ok");
+
+		}
+
 	} else {
 	    // print_r($is_valid);
-	    $app->flash('error', $is_valid);
+	    $msg = array("msg"=>"erreur");
+		
 	}
-
-
+	echo json_encode($msg);
 });
