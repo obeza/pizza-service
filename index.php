@@ -29,6 +29,7 @@ require 'controller_app_menu.php';
 require 'controller_app_utilisateur_infos.php';
 require 'controller_app_utilisateurs.php';
 require 'controller_app_login.php';
+require 'controller_app_favoris.php';
 
 require 'controller_app_commande.php';
 

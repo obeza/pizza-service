@@ -6,7 +6,7 @@ $app->post('/app/utilisateur/creer', function () use ($app) {
 
 	// on met le $json dans un table PHP
     //$data = json_decode($json, true);
-    header('Access-Control-Allow-Origin: *');  
+    //header('Access-Control-Allow-Origin: *');  
 	$data = json_decode(file_get_contents("php://input"), true);
 	//echo ($data->nom);
 
