@@ -8,14 +8,24 @@ require '../vendor/autoload.php';
 
 $app = new \Slim\Slim();
 
-// $corsOptions = array(
-//     "origin" => "*",
-//     "exposeHeaders" => array("Content-Type", "X-Requested-With", "X-authentication", "X-client"),
-//     "allowMethods" => array('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS')
-// );
-// $cors = new \CorsSlim\CorsSlim($corsOptions);
+require ('../vendor/palanik/corsslim/CorsSlim.php');
 
-// $app->add($cors);
+$corsOptions = array(
+    "origin" => "*",
+    "exposeHeaders" => array("Content-Type", "X-Requested-With", "X-authentication", "X-client", "Origin", "auth_token"),
+    "allowMethods" => array('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'),
+    "allowHeaders" => array("auth_token")
+); 
+$app->add(new \CorsSlim\CorsSlim($corsOptions));
+
+
+function test(){
+	$app = \Slim\Slim::getInstance();
+
+	$token =  $app->request->headers->get('auth_token');
+	//echo $token;
+	return $token;
+}
 
 require 'middleware_auth.php';
 

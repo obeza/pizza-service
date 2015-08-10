@@ -1,16 +1,16 @@
 <?
 
-$app->get('/app/utilisateur/infos', function () use ($app) {
+$app->get('/app/utilisateur/infos/:token', function ($token) use ($app) {
 
-	$token =  $app->request->headers->get('auth_token');
+	//header("Access-Control-Allow-Origin: *");
 
-	if(!$token){
-		$app->halt(401);
-	}
+	//$token =  $app->request->headers->get('auth_token');
+
 
 	$liste = ORM::for_table('clients')->where('token', $token)->find_array();
 	
 	if ( $liste ){
+		//echo "<br> passe ";
 		$app->response()->header("Content-Type", "application/json");
 
 		$infos= json_encode($liste[0]);
@@ -29,4 +29,6 @@ $app->get('/app/utilisateur/infos', function () use ($app) {
 
 	} 
 
+
 });
+

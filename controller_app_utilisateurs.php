@@ -1,4 +1,36 @@
 <?
+// $app->get('/app/utilisateur/:token', function ($token) use ($app) {
+
+// 	//header("Access-Control-Allow-Origin: *");
+
+// 	//$token =  $app->request->headers->get('auth_token');
+
+
+// 	$liste = ORM::for_table('clients')->where('token', $token)->find_array();
+	
+// 	if ( $liste ){
+// 		//echo "<br> passe ";
+// 		$app->response()->header("Content-Type", "application/json");
+
+// 		$infos= json_encode($liste[0]);
+// 		$infos = json_decode($infos);
+// 		unset($infos->passe);
+// 		unset($infos->token);
+// 		unset($infos->etab);
+// 		unset($infos->dt_creation);
+// 		unset($infos->system);
+// 		unset($infos->gcm);
+// 		echo json_encode($infos);
+
+// 	} else {
+
+// 		$app->halt(401);
+
+// 	} 
+
+
+// });
+
 $app->post('/app/utilisateur/creer', function () use ($app) {
 
 	// on récupére le JSON via une fonction de Slim
@@ -34,7 +66,6 @@ $app->post('/app/utilisateur/creer', function () use ($app) {
 	    	$msg = array("msg"=>"email");
 	    	
 	    } else {
-		
 
 		    $fiche = ORM::for_table('clients')->create();
 
@@ -61,3 +92,62 @@ $app->post('/app/utilisateur/creer', function () use ($app) {
 	}
 	echo json_encode($msg);
 });
+
+$app->post('/app/utilisateur/modifier/:token', function ($token) use ($app) {
+
+	$data = json_decode(file_get_contents("php://input"));
+
+	$liste = ORM::for_table('clients')->where('token', $token)->find_one();
+	
+	if ( $liste ){
+		$liste->adresse = $data->adresse;
+		$liste->nom = $data->nom;
+		$liste->prenom = $data->prenom;
+		$liste->tel = $data->tel;
+		$liste->ville = $data->ville;
+		$liste->save();
+
+		$app->response()->header("Content-Type", "application/json");
+		$msg = array("msg"=>"ok");
+		echo json_encode($msg);
+
+	} else {
+
+		$app->halt(401);
+
+	} 
+
+
+});
+
+$app->post('/app/utilisateur/modifier/passe/:token', function ($token) use ($app) {
+
+	$data = json_decode(file_get_contents("php://input"));
+
+	$liste = ORM::for_table('clients')
+		->where('token', $token)
+		->find_one();
+	
+	if ( $liste ){
+
+		if ( $liste->passe===sha1($data->actu) ){			
+			$liste->passe = sha1($data->nouv1);
+			$liste->save();
+			$alerte = "ok !";
+		} else {
+			$alerte = "passe";
+		}
+
+		$app->response()->header("Content-Type", "application/json");
+		$msg = array("msg"=>$alerte);
+		echo json_encode($msg);
+
+	} else {
+
+		$app->halt(401);
+
+	}
+
+});
+
+

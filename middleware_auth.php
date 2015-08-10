@@ -4,7 +4,8 @@ function auth() {
 
 	$app = \Slim\Slim::getInstance();
 
-	$token =  $app->request->headers->get('token');
+	$token =  $app->request->headers->get('auth_token');
+	//echo $token;
 
 	if(!$token){
 		$app->halt(401);
