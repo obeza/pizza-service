@@ -43,6 +43,8 @@ require 'controller_app_favoris.php';
 
 require 'controller_app_commande.php';
 
+require 'controller_order_commandes.php';
+
 //require 'controller_paypal_webhooks.php'
 $app->run();
 

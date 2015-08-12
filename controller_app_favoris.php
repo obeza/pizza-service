@@ -83,20 +83,21 @@ $app->get('/app/favoris/liste/:token', function ($token) use ($app) {
 			->where('jaime', 'y')
 			->find_array();
 
-		$tabfav = array();
-		for ($i = 0; $i < sizeof($favoris); $i ++) {
+		if ($favoris){
+			$tabfav = array();
+			for ($i = 0; $i < sizeof($favoris); $i ++) {
+	    		array_push($tabfav, $favoris[$i]['articleId']);
+			}			
+		
+			$results = ORM::for_table('articles')
+				->where_in('id', $tabfav)
+				->find_array();
 
-    		array_push($tabfav, $favoris[$i]['articleId']);
 
+			$app->response()->header("Content-Type", "application/json");
+			$alerte = array("msg"=> "ok");
+			echo json_encode($results);
 		}
-
-		$results = ORM::for_table('articles')
-			->where_in('id', $tabfav)
-			->find_array();
-
-		$app->response()->header("Content-Type", "application/json");
-		$alerte = array("msg"=> "ok");
-		echo json_encode($results);
 	}
 
 });
