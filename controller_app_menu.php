@@ -17,9 +17,9 @@ $app->get('/etab/:id', function ($id) use ($app) {
 	$data['articles'] = $articles;
 
 
-	$app->response()->header("Content-Type", "application/json");
-
-	echo json_encode($data);
+	$app->render(200,array(
+        	'data' => $data
+    	));
 
 	
 });

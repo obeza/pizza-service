@@ -1,4 +1,51 @@
 <?
+$app->get('/app/favoris/liste/:token', function ($token) use ($app) {
+
+	$client = ORM::for_table('clients')
+		->where('token', $token)
+		->find_one();
+
+	if (!$client){
+		$msg = "token";
+		$app->render(200,array(
+        	'msg' => $msg
+    	));
+		$app->halt(401);
+
+	} else {
+	// 	//$clientId = $client->id;
+		$favoris = ORM::for_table('favoris')
+			->where('clientId', $client->id)
+			->where('etab', $client->etab)
+			->where('jaime', 'y')
+			->find_array();
+
+		if ($favoris){
+			$tabfav = array();
+			for ($i = 0; $i < sizeof($favoris); $i ++) {
+	    		array_push($tabfav, $favoris[$i]['articleId']);
+			}
+		
+			$results = ORM::for_table('articles')
+				->where_in('id', $tabfav)
+				->find_array();
+
+			$app->render(200,array(
+        		'data' => $results,
+        		'msg' => $msg
+    		));
+
+	// 		// $app->response()->header("Content-Type", "application/json");
+	// 		// $alerte = array("msg"=> "ok");
+	// 		// echo json_encode($results);
+		} else {
+			$app->render(200,array(
+        		'msg' => 'no data'
+    		));
+		}
+	}
+
+});
 
 $app->get('/app/favoris/:id/etab/:etab/token/:token', function ($id, $etab, $token) use ($app) {
 
@@ -26,8 +73,11 @@ $app->get('/app/favoris/:id/etab/:etab/token/:token', function ($id, $etab, $tok
 		}
 	}
 
-	$alerte = array("jaime"=> $jaime, "msg"=> $msg);
-	echo json_encode($alerte);
+		$app->render(200,array(
+        'msg' => $msg,
+        'jaime' => $jaime,
+    ));
+
 
 });
 
@@ -61,46 +111,18 @@ $app->get('/app/favoris/:id/etab/:etab/jaime/:jaime/token/:token', function ($id
 			$favorisAjouter->save();
 			$msg = "create";
 		}
-		$app->response()->header("Content-Type", "application/json");
-		$alerte = array("msg"=> $msg);
-		echo json_encode($alerte);
+
+		$app->render(200,array(
+        'msg' => $msg,
+    	));
+		// $app->response()->header("Content-Type", "application/json");
+		// $alerte = array("msg"=> $msg);
+		// echo json_encode($alerte);
 	}
 
 });
 
-$app->get('/app/favoris/liste/:token', function ($token) use ($app) {
 
-	$client = ORM::for_table('clients')->where('token', $token)->find_one();
-
-	if (!$client){
-		$msg = "token";
-		$app->halt(401);
-	} else {
-		//$clientId = $client->id;
-		$favoris = ORM::for_table('favoris')
-			->where('clientId', $client->id)
-			->where('etab', $client->etab)
-			->where('jaime', 'y')
-			->find_array();
-
-		if ($favoris){
-			$tabfav = array();
-			for ($i = 0; $i < sizeof($favoris); $i ++) {
-	    		array_push($tabfav, $favoris[$i]['articleId']);
-			}			
-		
-			$results = ORM::for_table('articles')
-				->where_in('id', $tabfav)
-				->find_array();
-
-
-			$app->response()->header("Content-Type", "application/json");
-			$alerte = array("msg"=> "ok");
-			echo json_encode($results);
-		}
-	}
-
-});
 
 
 

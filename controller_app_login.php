@@ -3,12 +3,7 @@
 $app->post('/app/utilisateur/login', function () use ($app) {
 
 
-	$data = json_decode(file_get_contents("php://input"));
-
-	// echo sha1($data->email);
-	// echo "<br/>";
-	// echo sha1($data->passe);
-	// exit;
+	$data = json_decode($app->request->getBody());
 
 	$client = ORM::for_table('clients')
 	->where('email', $data->email)
@@ -18,7 +13,6 @@ $app->post('/app/utilisateur/login', function () use ($app) {
 
 	$msg = "erreur";
 	$token = "";
-
 
 	if ($client){
 		
@@ -40,10 +34,15 @@ $app->post('/app/utilisateur/login', function () use ($app) {
 		$client = "";
 	}
 
+	$app->render(200,array(
+        'msg' => $msg,
+        'token' => $token,
+        'infos' => $infos[0]
+    ));
 
-	$msg = array("msg"=> $msg,"token"=>$token, "infos"=> $infos[0]);
+	// $msg = array("msg"=> $msg,"token"=>$token, "infos"=> $infos[0]);
 
-	$app->response()->header("Content-Type", "application/json");
-	echo json_encode($msg);
+	// $app->response()->header("Content-Type", "application/json");
+	// echo json_encode($msg);
 
 });

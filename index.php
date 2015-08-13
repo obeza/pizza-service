@@ -6,9 +6,14 @@ require 'dbase_config.php';
 require_once '../vendor/gump.php';
 require '../vendor/autoload.php';
 
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array(
+    'mode' => 'development'
+));
 
-require ('../vendor/palanik/corsslim/CorsSlim.php');
+$app->view(new \JsonApiView());
+$app->add(new \JsonApiMiddleware());
+
+//require ('../vendor/palanik/corsslim/CorsSlim.php');
 
 $corsOptions = array(
     "origin" => "*",
@@ -44,6 +49,8 @@ require 'controller_app_favoris.php';
 require 'controller_app_commande.php';
 
 require 'controller_order_commandes.php';
+
+require 'test.php';
 
 //require 'controller_paypal_webhooks.php'
 $app->run();
