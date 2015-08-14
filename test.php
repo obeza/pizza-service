@@ -1,15 +1,13 @@
 <?
-$app->get('/testo/:name', function ($name) use ($app) {
-    
+$app->get('/testedate', function () use ($app) {
+   
 
-    $token = $app->request->headers->get('auth_token');
-    //$token = apache_request_headers()["token"];
+    date_default_timezone_set('America/La_Paz');
+ 	$date= date('Y-m-d H:i:s') ;
 
-    // $app->view()->setResponse(array('response' => $token ));
-    // $app->render('json');
 
 	$app->render(200,array(
-        'msg' => $token,
+        'msg' => $date,
     ));
 
 });
