@@ -3,7 +3,7 @@
 $app->post('/app/utilisateur/login', function () use ($app) {
 
 
-	$data = json_decode($app->request->getBody());
+	$data = getJson();
 
 	$client = ORM::for_table('clients')
 	->where('email', $data->email)
@@ -13,6 +13,7 @@ $app->post('/app/utilisateur/login', function () use ($app) {
 
 	$msg = "erreur";
 	$token = "";
+	$infos = [];
 
 	if ($client){
 		
@@ -23,18 +24,31 @@ $app->post('/app/utilisateur/login', function () use ($app) {
 		$client->save();
 		$msg = "ok";
 
-		$infos = ORM::for_table('clients')->where('id', $client->id)->find_array();
-		unset($infos->passe);
-		unset($infos->token);
-		unset($infos->etab);
-		unset($infos->dt_creation);
-		unset($infos->system);
-		unset($infos->gcm);
+		$infos = ORM::for_table('clients')
+			->select_many(
+				'id', 
+				'nom', 
+				'prenom',
+				'adresse',
+				'ville',
+				'tel',
+				'email'
+			)
+			->where('id', $client->id)
+			->find_array();
+
+
+		// unset($infos->passe);
+		// unset($infos->token);
+		// unset($infos->etab);
+		// unset($infos->dt_creation);
+		// unset($infos->system);
+		// unset($infos->gcm);
 	} else {
 		$client = "";
 	}
 
-	$app->render(200,array(
+	render(array(
         'msg' => $msg,
         'token' => $token,
         'infos' => $infos[0]

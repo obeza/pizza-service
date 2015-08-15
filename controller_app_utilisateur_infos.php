@@ -14,22 +14,24 @@ $app->get('/app/utilisateur/infos/:id', function ($id) use ($app) {
 		// $infos = json_encode($liste[0]);
 		// $infos = json_decode($infos);
 		$infos = $liste[0];
-		unset($infos->passe);
-		unset($infos->token);
-		unset($infos->etab);
-		unset($infos->dt_creation);
-		unset($infos->system);
-		unset($infos->gcm);
+		// unset($infos->passe);
+		// unset($infos->token);
+		// unset($infos->etab);
+		// unset($infos->dt_creation);
+		// unset($infos->system);
+		// unset($infos->gcm);
 
-		$app->render( 200, array(
-        	'infos' => $infos
-    	));
+		render( $infos );
 
 	} else {
 
 		$app->halt(401);
 
-	} 
+	}
 
 });
+
+
+
+
 

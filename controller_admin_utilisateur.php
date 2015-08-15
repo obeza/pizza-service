@@ -7,7 +7,9 @@
 // liste
 $app->get('/utilisateurs/:id', function ($id) {
 
-	$liste = ORM::for_table('utilisateurs')->find_array();
+	$liste = ORM::for_table('utilisateurs')
+	->where('etab', $id)
+	->find_array();
 
 	//$data['data'] = $liste;
 	//$app->response()->header("Content-Type", "application/json");
@@ -26,7 +28,7 @@ $app->get('/utilisateur/:id', function ($id) use ($app) {
 
 });
 
-// publier
+// ajouter
 $app->post('/utilisateur', function () {
 
 
@@ -34,14 +36,14 @@ $app->post('/utilisateur', function () {
 
 	$fiche = ORM::for_table('utilisateurs')->create();
 
-	$fiche->etablissement = $data->etablissement;
+	$fiche->etab = $data->etablissement;
 	$fiche->nom = $data->nom;
 
 	if(!empty($data->email)){
 		$fiche->email = $data->email;
 	}
 	
-	$fiche->passe = base64_encode($data->passe);
+	$fiche->passe = sha1($data->passe);
 
 	$fiche->save();
 
@@ -63,7 +65,7 @@ $app->put('/utilisateur/:id', function ($id) use ($app) {
 	$fiche->nom = $input->nom;
 	$fiche->email = $input->email;
 
-	$fiche->passe = $input->passe;
+	$fiche->passe = sha1($input->passe);
 	
 	$fiche->statut = $input->statut;
 	

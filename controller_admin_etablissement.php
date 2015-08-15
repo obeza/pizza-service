@@ -5,13 +5,17 @@
 */
 
 // liste
-$app->get('/etablissement', function () {
+$app->get('/etablissement', function () use ($app) {
 
 	$liste = ORM::for_table('etablissements')->find_array();
 
 	//$data['data'] = $liste;
 	//$app->response()->header("Content-Type", "application/json");
 	echo json_encode($liste);
+
+	// $app->render(200,
+ //        $liste
+ //    );
 
 });
 

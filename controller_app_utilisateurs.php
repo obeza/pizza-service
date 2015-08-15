@@ -93,9 +93,11 @@ $app->post('/app/utilisateur/creer', function () use ($app) {
 	echo json_encode($msg);
 });
 
-$app->post('/app/utilisateur/modifier/:token', function ($token) use ($app) {
+$app->post('/app/utilisateur/modifier', function () use ($app) {
 
 	$data = json_decode(file_get_contents("php://input"));
+
+	$token = $app->request->headers->get('auth_token');
 
 	$liste = ORM::for_table('clients')->where('token', $token)->find_one();
 	
@@ -107,9 +109,11 @@ $app->post('/app/utilisateur/modifier/:token', function ($token) use ($app) {
 		$liste->ville = $data->ville;
 		$liste->save();
 
-		$app->response()->header("Content-Type", "application/json");
-		$msg = array("msg"=>"ok");
-		echo json_encode($msg);
+		// $app->response()->header("Content-Type", "application/json");
+		// $msg = array("msg"=>"ok");
+		// echo json_encode($msg);
+
+		render( array("msg"=>"ok") );
 
 	} else {
 
@@ -120,9 +124,11 @@ $app->post('/app/utilisateur/modifier/:token', function ($token) use ($app) {
 
 });
 
-$app->post('/app/utilisateur/modifier/passe/:token', function ($token) use ($app) {
+$app->post('/app/utilisateur/modifier/passe', function () use ($app) {
 
 	$data = json_decode(file_get_contents("php://input"));
+
+	$token = $app->request->headers->get('auth_token');
 
 	$liste = ORM::for_table('clients')
 		->where('token', $token)
@@ -133,14 +139,16 @@ $app->post('/app/utilisateur/modifier/passe/:token', function ($token) use ($app
 		if ( $liste->passe===sha1($data->actu) ){			
 			$liste->passe = sha1($data->nouv1);
 			$liste->save();
-			$alerte = "ok !";
+			$alerte = "ok";
 		} else {
 			$alerte = "passe";
 		}
 
-		$app->response()->header("Content-Type", "application/json");
-		$msg = array("msg"=>$alerte);
-		echo json_encode($msg);
+		// $app->response()->header("Content-Type", "application/json");
+		// $msg = array("msg"=>$alerte);
+		// echo json_encode($msg);
+
+		render( array("msg"=>$alerte) );
 
 	} else {
 

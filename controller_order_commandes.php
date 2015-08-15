@@ -2,7 +2,7 @@
 //
 //	liste par rapport aux statuts
 //
-$app->get('/app/order/etab/:etab/commandes/statut/:statut', function ($etab, $statut) use ($app) {
+$app->get('/app/order/etab/:etab/commandes/statut/:statut', 'authOrder', function ($etab, $statut) use ($app) {
 
 	// structure attendue
 	// {
@@ -84,7 +84,8 @@ $app->get('/app/order/etab/:etab/commandes/statut/:statut', function ($etab, $st
 		->where('commandes.statut', 4)
 		->count();
 
-		$app->render(200,array(
+
+	$render = array(
         	'data' => $commandes,
         	'pastilles' => array( 
         		$nbCommandesToutes,
@@ -93,38 +94,14 @@ $app->get('/app/order/etab/:etab/commandes/statut/:statut', function ($etab, $st
         		$nbCommandes2,
         		$nbCommandes3
         	)
-    	));
+    	);
+
+	echo json_encode($render);
 
 });
 
-// $app->get('/app/order/etab/:etab/commandes/liste', function ($etab) use ($app) {
 
-// 	$commandes = ORM::for_table('clients')
-// 		->select_many(
-// 			'commandes.id', 
-// 			'clients.nom', 
-// 			'clients.prenom',
-// 			'clients.adresse',
-// 			'clients.ville',
-// 			'clients.point',
-// 			'commandes.details',
-// 			'commandes.dtsaisie',
-// 			'commandes.total',
-// 			'commandes.livraison',
-// 			'commandes.statut'
-// 		)
-// 		->join('commandes', array('clients.id', '=', 'commandes.clientId'))
-// 		->where('commandes.etab', $etab)
-// 		->where('clients.etab', $etab)
-// 		->find_array();
-
-// 		$app->render(200,array(
-//         	'data' => $commandes
-//     	));
-
-// });
-
-$app->post('/app/order/etab/:etab/commande', function () use ($app) {
+$app->post('/app/order/commande', 'authOrder', function () use ($app) {
 
 	// post => {
 	// 	commandeId
@@ -135,14 +112,18 @@ $app->post('/app/order/etab/:etab/commande', function () use ($app) {
 
 	$commandes = ORM::for_table('commandes')
 		->where('id', $data->commandeId)
+		->where('etab', $data->etab)
 		->find_one();
 
 	$commandes->statut = $data->statutMaj;
 	$commandes->save();
 
-		$app->render(200,array(
+	$render = array(
         	'msg' => 'ok'
-    	));
+    	);
+
+	echo json_encode($render);	
+
 
 });
 

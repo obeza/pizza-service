@@ -10,11 +10,6 @@ $app = new \Slim\Slim(array(
     'mode' => 'development'
 ));
 
-$app->view(new \JsonApiView());
-$app->add(new \JsonApiMiddleware());
-
-//require ('../vendor/palanik/corsslim/CorsSlim.php');
-
 $corsOptions = array(
     "origin" => "*",
     "exposeHeaders" => array("Content-Type", "X-Requested-With", "X-authentication", "X-client", "Origin", "auth_token"),
@@ -24,18 +19,21 @@ $corsOptions = array(
 $app->add(new \CorsSlim\CorsSlim($corsOptions));
 
 
-function test(){
+function render($data){
 	$app = \Slim\Slim::getInstance();
+	$app->response()->header("Content-Type", "application/json");
+	echo json_encode($data);
+}
 
-	$token =  $app->request->headers->get('auth_token');
-	//echo $token;
-	return $token;
+function getJson(){
+	$app = \Slim\Slim::getInstance();
+	return json_decode($app->request->getBody());
 }
 
 require 'middleware_auth.php';
 
-require 'controller_etablissement.php';
-require 'controller_utilisateur.php';
+require 'controller_admin_etablissement.php';
+require 'controller_admin_utilisateur.php';
 require 'controller_categorie.php';
 require 'controller_article.php';
 
@@ -50,7 +48,7 @@ require 'controller_app_commande.php';
 
 require 'controller_order_commandes.php';
 
-require 'test.php';
+require 'controller_order_conn.php';
 
 //require 'controller_paypal_webhooks.php'
 $app->run();
