@@ -20,14 +20,18 @@ $app->add(new \CorsSlim\CorsSlim($corsOptions));
 
 
 function render($data){
-	$app = \Slim\Slim::getInstance();
-	$app->response()->header("Content-Type", "application/json");
+	//$app = \Slim\Slim::getInstance();
+	//$app->response()->header("Content-Type", "application/json");
+	
+	header('Content-type: application/json');
 	echo json_encode($data);
 }
 
 function getJson(){
-	$app = \Slim\Slim::getInstance();
-	return json_decode($app->request->getBody());
+	//$app = \Slim\Slim::getInstance();
+	//return json_decode($app->request->getBody());
+	$data = json_decode(file_get_contents("php://input"));
+	return $data;
 }
 
 require 'middleware_auth.php';
