@@ -1,6 +1,6 @@
 <?
 
-function authApp() {
+$authApp = function() {
 
 	$app = \Slim\Slim::getInstance();
 
@@ -11,7 +11,9 @@ function authApp() {
 		$app->halt(401);
 	}
 
-	$liste = ORM::for_table('clients')->where('token', $token)->find_array();
+	$liste = ORM::for_table('clients')
+		->where('token', $token)
+		->find_array();
 	
 	if ( $liste ){
 		//$app->response()->header("Content-Type", "application/json");
@@ -21,7 +23,7 @@ function authApp() {
 		$app->halt(401);
 
 	} 
-}
+};
 
 function authOrder() {
 

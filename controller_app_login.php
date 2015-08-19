@@ -2,8 +2,10 @@
 
 $app->post('/app/utilisateur/login', function () use ($app) {
 
-
+	//$data = json_decode(file_get_contents("php://input"));
 	$data = getJson();
+	// $json = $app->request->getBody();
+ //    $data = json_decode($json, true);
 
 	$client = ORM::for_table('clients')
 	->where('email', $data->email)
@@ -37,26 +39,31 @@ $app->post('/app/utilisateur/login', function () use ($app) {
 			->where('id', $client->id)
 			->find_array();
 
+	$data = array( 
+		"msg"=>$msg,
+		"token"=>$token,
+		"infos"=>$infos[0]
+	);
 
-		// unset($infos->passe);
-		// unset($infos->token);
-		// unset($infos->etab);
-		// unset($infos->dt_creation);
-		// unset($infos->system);
-		// unset($infos->gcm);
-	} else {
-		$client = "";
+	header('Content-type: application/json');
+	echo json_encode($data);
+	exit;
+
+
 	}
 
-	render(array(
-        'msg' => $msg,
-        'token' => $token,
-        'infos' => $infos[0]
-    ));
+	// render(array(
+ //        'msg' => $msg,
+ //        'token' => $token,
+ //        'infos' => $infos[0]
+ //    ));
+	$data = array( 
+		"msg"=>"erreur"
+	);
 
-	// $msg = array("msg"=> $msg,"token"=>$token, "infos"=> $infos[0]);
-
-	// $app->response()->header("Content-Type", "application/json");
-	// echo json_encode($msg);
-
+	header('Content-type: application/json');
+	echo json_encode($data);
 });
+
+
+

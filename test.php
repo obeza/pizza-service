@@ -1,13 +1,15 @@
 <?
-$app->get('/testedate', function () use ($app) {
+$app->post('/testpost', function () use ($app) {
    
 
-    date_default_timezone_set('America/La_Paz');
- 	$date= date('Y-m-d H:i:s') ;
+  //   date_default_timezone_set('America/La_Paz');
+ 	// $date= date('Y-m-d H:i:s') ;
 
+	$data = getJson();
 
-	$app->render(200,array(
-        'msg' => $date,
-    ));
+	print_r($data);
+	// render(array(
+ //        'msg' => $data,
+ //    ));
 
 });
